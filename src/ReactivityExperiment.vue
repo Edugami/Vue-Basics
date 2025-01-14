@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive, ref, toRef, watch, watchEffect } from 'vue';
+import { computed, reactive, ref, toRef, watch } from 'vue';
+import { useReviewTaskStore } from './stores/reviewTask';
 
 type TestingType = { variable_1: number, variable_2: number };
 
@@ -32,7 +33,13 @@ const variable_2 = ref<number>(0);
 // function onClick() {
 //   localSettings.variable_1 += 2;
 //   localSettings.variable_2 -= 1;
-//   console.log(_data);
+//   console.log(_data); // No se actualiza // Si lo actualiza
+// }
+
+// function onClick2() {
+//   _data.variable_1 += 2;
+//   _data.variable_2 -= 1;
+//   console.log(_data); // Todo se actualiza
 // }
 
 // ##############
@@ -62,6 +69,7 @@ const variable_2 = ref<number>(0);
 //   localSettings_2.variable_2 -= 1;
 
 //   console.log(_data);
+// }
 
 // ##############
 // ### Part 4 ###
@@ -101,96 +109,117 @@ class Testing {
 //   - Composables with Classes
 
 // Composable
-function useTestingClass(input_1: TestingType) {
-  const _testing = new Testing(input_1);
-  const _testingReactive = reactive(_testing);
+// function useTestingClass(input_1: TestingType) {
+//   const _testing = new Testing(input_1);
+//   const _testingReactive = reactive(_testing);
   
-  const _sumWithoutReactive = computed(() => _testing.variable_1 + _testing.variable_2);
-  const _sumReactive = computed(() => _testingReactive.variable_1 + _testingReactive.variable_2);
+//   const _sumWithoutReactive = computed(() => _testing.variable_1 + _testing.variable_2);
+//   const _sumReactive = computed(() => _testingReactive.variable_1 + _testingReactive.variable_2);
 
-  return { _testing, _testingReactive, _sumWithoutReactive, _sumReactive}
-}
+//   return { _testing, _testingReactive, _sumWithoutReactive, _sumReactive}
+// }
 
 // - Caso 1
 // const { _testing: localSettings, _sumWithoutReactive: _sum } = useTestingClass(_data);
-// // - Caso 2
+// - Caso 2
 // const { _testing: localSettings, _sumReactive: _sum } = useTestingClass(_data);
-// // - Caso 3
+// - Caso 3
 // const { _testingReactive: localSettings, _sumWithoutReactive: _sum } = useTestingClass(_data);
-// // - Caso 4
+// - Caso 4
 // const { _testingReactive: localSettings, _sumReactive: _sum } = useTestingClass(_data);
 
 // ##############
 // ### Part 6 ###
 // ##############
 
-const localSettings = reactive({
-  params: {
-   pagination: {
-    page: 1,
-    size: 1,
-   }
-  }
-});
+// const localSettings = reactive({
+//   params: {
+//    pagination: {
+//     page: 1,
+//     size: 1,
+//    }
+//   }
+// });
 
-const page = ref(localSettings.params.pagination.page); // ref<number>(1);
-const size = toRef(localSettings.params.pagination, 'size');
+// const page = toRef(localSettings.params.pagination, 'page');
+// const size = toRef(localSettings.params.pagination, 'size');
 
-watch(page, () => {
-  console.log('Entro!!!!')
-  page.value = 10;
-  console.log('Entro ----- !!!!')
-})
-
-// page
-// watchEffect((page) => {
-//   console.log('Entro 2!!!!')
+// watch(page, () => {
+//   console.log('Entro!!!!')
 //   page.value = 10;
 // })
 
-function onClick() {
-  page.value += 1;
-  size.value += 1;
+// function onClick() {
+//   page.value += 1;
+//   size.value += 1;
+// }
+
+// function onClick2() {
+//   localSettings.params.pagination.page += 1;
+//   localSettings.params.pagination.size += 1;
+// }
+
+// #######################
+// ### Part 7 - Part 1 ###
+// #######################
+
+
+// const { ids, choseResourceById, choseResourceByIdv2 } = useReviewTaskStore();
+
+const chosen = ref(0);
+
+// let localSettings = choseResourceById(chosen.value);
+// function onChangeResource() {
+//   localSettings = choseResourceById(chosen.value);
+// }
+// function onChangeResourceV2() {
+//   localSettings.value = reactive(choseResourceByIdv2(chosen.value));
+// }
+// function onChangeResourceV3() {
+//   localSettings.value = choseResourceByIdv2(chosen.value);
+// }
+
+// #######################
+// ### Part 7 - Part 2 ###
+// #######################
+
+const { createResource, reactiveHash } = useReviewTaskStore();
+
+const ids = computed(() => {
+  if (Object.keys(reactiveHash).length > 0) {
+    return Object.keys(reactiveHash).map(id => parseInt(id));
+  }
+  return [];
+});
+
+let _resource = computed(() => reactiveHash[chosen.value]);
+
+const reRenderSelected = ref(0);
+function onChangeResource() {
+  reRenderSelected.value += 1;
+  chosen.value = 0;
+  createResource();
 }
 
-function onClick2() {
-  localSettings.params.pagination.page += 1;
-  localSettings.params.pagination.size += 1;
-}
-
-// ##############
-// ### Part 7 ###
-// ##############
-
-// const hash_reactivity: any = {}
-// const localSettings = reactive({
-//   number: 0
-// });
-
-// function addData(){
-//   hash_reactivity[localSettings.number] = reactive(_data);
-// }
-
-// function retrieveData(number: number) {
-//   return hash_reactivity[number];
-// }
-
-// // Opcion 2 - Es la mejor!
-
-// const _data_hash: any = {}
-
-// function addData_2(){
-//   _data_hash[localSettings.number] = new Testing(_data);
-// }
-
-// function retrieveData_2(number: number) {
-//   return reactive(_data_hash[number]);
-// }
-
-
+const activeTab = ref('list')
 </script>
+
 <template>
   <div class="container">
+    <div class="tabs">
+      <button 
+        :class="{ active: activeTab === 'list' }" 
+        @click="activeTab = 'list'"
+      >
+        Tag List
+      </button>
+      <button 
+        :class="{ active: activeTab === 'manager' }" 
+        @click="activeTab = 'manager'"
+      >
+        Tag Manager
+      </button>
+    </div>
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   -->
 
@@ -247,20 +276,82 @@ function onClick2() {
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   -->
 
-    <h2> Part 6 - toRef </h2> 
-    <p> Var 1: {{ localSettings.params.pagination.page }} </p>
+   <!-- <h2> Part 6 - toRef </h2> 
+    <p> Var 1 (LS - Page): {{ localSettings.params.pagination.page }} </p>
     <hr/>
-    <p> Var 2: {{ localSettings.params.pagination.size }} </p> 
-    
+    <p> Var 2 (LS - Size): {{ localSettings.params.pagination.size }} </p> 
     <hr/>
 
-    <p> Var 1: {{ page }} </p>
+
+    <p> Var 1 (toRef - Page): {{ page }} </p>
     <hr/>
-    <p> Var 2: {{ size }} </p> 
+    <p> Var 2 (toRef - Size): {{ size }} </p> 
     <hr/>
 
     <button @click="onClick"> APRETAR (toRef) </button>
-    <button @click="onClick2"> APRETAR 2 </button>
+    <button @click="onClick2"> APRETAR 2 </button> -->
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   -->
+
+    <!-- <h2> Part 7 - Composition of Clases (Part 1) </h2>
+    
+    localSettings = choseResourceById(chosen)
+    <select v-model="chosen" @change="onChangeResource">
+      <option v-for="id in ids" :key="id" :value="id">Resource {{id}}</option>
+    </select>
+
+    localSettings.value = reactive(choseResourceByIdv2(chosen))
+    <select v-model="chosen" @change="onChangeResourceV2">
+      <option v-for="id in ids" :key="id" :value="id">Resource {{id}}</option>
+    </select>
+
+    localSettings.value = choseResourceByIdv2(chosen.value);
+    <select v-model="chosen" @change="onChangeResourceV3">
+      <option v-for="id in ids" :key="id" :value="id">Resource {{id}}</option>
+    </select>
+
+    <div v-if="localSettings.id">
+      <div v-for="(subResource) in localSettings.subResources" :key="subResource.id" class="sub-resource">
+        <h3>SubResource {{subResource.id}}</h3>
+        <p>Variable 1: {{subResource.variable_1}}</p>
+        <p>Variable 2: {{subResource.variable_2}}</p>
+        <button @click="subResource.onClick()">on Click</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <button @click="localSettings.createSubResource()">Add SubResource</button> -->
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   -->
+
+   <h2> Part 7 - Composition of Clases (Part 2) </h2>
+    
+    <div>
+      <select v-model="chosen" :key="reRenderSelected">
+        <option v-for="id in [0, ...ids]" :key="id" :value="id">Resource {{id}}</option>
+      </select>
+    </div>
+
+    <hr>
+
+    <div v-if="_resource">
+      <div v-for="(subResource) in _resource.subResources" :key="subResource.id" class="sub-resource">
+        <h3>SubResource {{subResource.id}}</h3>
+        <p>Variable 1: {{subResource.variable_1}}</p>
+        <p>Variable 2: {{subResource.variable_2}}</p>
+        <button @click="subResource.onClick()">on Click</button>
+      </div>
+    </div>
+
+    Crear un SubResource
+    <button @click="_resource.createSubResource()">Add SubResource</button>
+
+    <hr>
+
+    Crear un Resource
+    <button @click="onChangeResource()">Add Resource</button>
+
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   -->
 
@@ -269,12 +360,30 @@ function onClick2() {
 
 <style scoped>
 .container {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-hr {
- margin: 10px;
+.tabs {
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #007bff;
+  color: white;
+}
+
+.content {
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 </style>
