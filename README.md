@@ -1,25 +1,19 @@
-# ReactivityTest
+# Vue Basics
 
-This template should help get you started developing with Vue 3 in Vite.
+Este proyecto es para mostrar dos cosas importantes de Vue
 
-## Recommended IDE Setup
+- Reactivity
+- Pinia Store
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+La idea es que podamos entender como funcionan estos dos elementos de Vue cuando lo usamos con Clases. Es demasiado potente escribir Clases las cuales se puedan serializar y deserializar bien. Además poder usarlas de forma correcta con la reactividad lo hace super potente.
 
-## Type Support for `.vue` Imports in TS
+En teoría deberiamos 
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+ 1. Tener clases para dejar la lógica del negocio
+ 2. Tener stores para mantener información a traves de la sesión o sesiones
+ 3. Usar composables para ayudarnos con las clases!
+ 4. Tener componentes que llamen a los tres de arriba. La lógica nunca debiese estar en la vista principal!. Lo hace muy dificil el mantenimiento
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
@@ -37,10 +31,4 @@ npm run dev
 
 ```sh
 npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
