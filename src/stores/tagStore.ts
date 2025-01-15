@@ -172,12 +172,13 @@ export const useTagStore = defineStore('tagStore', () => {
     loadFromLocalStorage
   }
 }, {
+  // persist: false,
   // https://prazdevs.github.io/pinia-plugin-persistedstate/guide/config.html
   persist: {
     key: 'tagStore',
     storage: localStorage,
     serializer: {
-      serialize: (state) => {
+      serialize: (state) => { // Devolver un String
         const startTime = performance.now()
         const serializableState = {
           tags: state.tags,
@@ -187,7 +188,7 @@ export const useTagStore = defineStore('tagStore', () => {
         console.log(`Serialize took ${endTime - startTime}ms`)
         return JSON.stringify(serializableState);
       },
-      deserialize: (data) => {
+      deserialize: (data: string) => {
         console.log('Data to deserialize:', data)
         const startTime = performance.now()
         const parsed = JSON.parse(data)

@@ -15,7 +15,7 @@ const activeTab = ref('list')
       >
         Tag List
       </button>
-      <button 
+      <button
         :class="{ active: activeTab === 'manager' }" 
         @click="activeTab = 'manager'"
       >

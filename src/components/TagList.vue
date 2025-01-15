@@ -31,6 +31,7 @@ function updateTagName(id: number) {
       <button @click="store.printTag(tag)">Print Tag</button><br>
       <button @click="store.printNameTag(tag)">Print Name Tag</button><br>
 
+      <!-- Esto va a romper el persist: false -->
       <h4> Relations </h4>
       <div class="relations">
         <div v-if="tag.getChildren(tags).length">
