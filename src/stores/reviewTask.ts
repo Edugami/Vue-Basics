@@ -4,7 +4,7 @@ import { Resource } from '@/classes';
 
 export const useReviewTaskStore = defineStore('ClassStore', () => {
  
-  const _hash: any = {} 
+  const _hash: Record<number, Resource> = {} 
   let _resourceID = 1; 
   let _srID = 1; 
   
@@ -20,8 +20,8 @@ export const useReviewTaskStore = defineStore('ClassStore', () => {
     _testing.createSubResource(_srID); 
     _srID += 1
 
-    // _hash[_testing.id] = _testing; // Part 1 
-    reactiveHash[_testing.id] = _testing; // Part 2
+    _hash[_testing.id] = _testing; // Part 1 
+    // reactiveHash[_testing.id] = _testing; // Part 2
   }
 
   createResource();
@@ -36,12 +36,12 @@ export const useReviewTaskStore = defineStore('ClassStore', () => {
   }
 
   // No funciona si se usa computed. Solo funciona desde el componente. 
-  // const ids = computed(() => {
-  //   if (Object.keys(reactiveHash).length > 0) {
-  //     return Object.keys(reactiveHash).map(id => parseInt(id));
-  //   }
-  //   return [];
-  // });
+  const ids = computed(() => {
+    if (Object.keys(reactiveHash).length > 0) {
+      return Object.keys(reactiveHash).map(id => parseInt(id));
+    }
+    return [];
+  });
 
-  return { createResource, choseResourceById, choseResourceByIdv2, reactiveHash }
+  return { ids, createResource, choseResourceById, choseResourceByIdv2, reactiveHash }
 })
