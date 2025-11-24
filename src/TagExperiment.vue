@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import TagList from './components/TagList.vue'
-import TagManager from './components/TagManager.vue'
+import TagList from './components/Tag/TagList.vue'
+import TagManager from './components/Tag/TagManager.vue'
 
 const activeTab = ref('list')
 </script>

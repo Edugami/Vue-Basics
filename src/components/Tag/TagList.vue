@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useTagStore } from '../stores/tagStore'
+import { Tag, useTagStore } from '../../stores/tagStore'
 import { storeToRefs } from 'pinia'
-
 const store = useTagStore()
 const { tags, lastSync } = storeToRefs(store)
 
@@ -9,6 +8,13 @@ function updateTagName(id: number) {
   const newName = prompt('Enter new name:')
   if (newName) {
     store.updateTag(id, newName)
+  }
+}
+
+function addChildrenByClassMethod(tag: Tag) {
+  const ChildrenID = prompt('Enter new children ID:')
+  if (ChildrenID) {
+   tag.addChild(parseInt(ChildrenID))
   }
 }
 </script>
@@ -25,8 +31,11 @@ function updateTagName(id: number) {
       <button @click="tag.printName()">Print Name directly</button><br>
       <button @click="() => { console.log(tag.getChildren(store.tags)); }">GetChildren</button><br>
       <button @click="() => { console.log(tag.getParents(store.tags)); }">GetParents</button><br>
+      <button @click="() => { console.log(tag.serialize()); }">Serialize</button><br>
+      <button @click="() => { addChildrenByClassMethod(tag); }">Add Children</button><br><br>
+      
+      <h4 style="margin-top: 10px;"> Store Methods </h4>
 
-      <h4> Store Methods </h4>
       <button @click="updateTagName(tag.id)">Update Name</button><br>
       <button @click="store.printTag(tag)">Print Tag</button><br>
       <button @click="store.printNameTag(tag)">Print Name Tag</button><br>
@@ -34,7 +43,7 @@ function updateTagName(id: number) {
       <!-- Esto va a romper el persist: false -->
       <h4> Relations </h4>
       <div class="relations">
-        <div v-if="tag.getChildren(tags).length">
+        <div v-if="tag && tag?.getChildren(tags).length">
           <p>Children:</p>
           <ul>
             <li v-for="child in tag.getChildren(tags)" :key="child.id">

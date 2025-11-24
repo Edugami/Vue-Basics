@@ -9,7 +9,12 @@ interface SerializedTag {
   parents: number[];
 }
 
-class Tag {
+export class Tag {
+
+  // Estatico
+  static id: number = 0;
+
+  // Instancia de la Clase
   id: number
   name: string
   children: number[]
@@ -20,6 +25,10 @@ class Tag {
     this.name = name
     this.children = children
     this.parents = parents
+  }
+
+  changeName(newName: string) {
+    this.name = newName
   }
 
   printName(): string {
@@ -88,8 +97,9 @@ function getCurrentDateTime(): string {
 export const useTagStore = defineStore('tagStore', () => {
   console.log("Se llamo a TagStore")
 
-  const tags = ref<Tag[]>(seedTags)
+  const tags = ref<Tag[]>(seedTags) // ref es un wrapper get / set
   const lastSync = ref<string>(getCurrentDateTime())
+  const forceReactivity = ref<number>(0);
 
   // Métodos de serialización
   function serializeTags(): SerializedTag[] {
@@ -175,12 +185,15 @@ export const useTagStore = defineStore('tagStore', () => {
   // persist: false,
   // https://prazdevs.github.io/pinia-plugin-persistedstate/guide/config.html
   persist: {
+    // enabled: true,
     key: 'tagStore',
     storage: localStorage,
+    // paths: ['tags', 'lastSync'],
     serializer: {
       serialize: (state) => { // Devolver un String
         const startTime = performance.now()
         const serializableState = {
+          name: "Carlos",
           tags: state.tags,
           lastSync: state.lastSync,
         };

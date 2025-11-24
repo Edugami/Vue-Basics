@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTagStore } from '../stores/tagStore'
+import { useTagStore } from '../../stores/tagStore'
 import { storeToRefs } from 'pinia'
 
 const store = useTagStore()
